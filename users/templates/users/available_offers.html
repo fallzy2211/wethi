@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <h1>Offres Disponibles</h1>
+    <ul>
+        {% for offer in offers %}
+            <li>
+                <a href="{% url 'users:chat' offer.id %}">
+                    {{ offer.currency_from }} - {{ offer.currency_to }} | Réservée par : {{ offer.user }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

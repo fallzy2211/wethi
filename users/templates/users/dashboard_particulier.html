@@ -1,0 +1,60 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto">
+
+    <div class="text-center mb-10">
+        <p class="text-gray-400">Suivez vos offres, transactions et discussions en temps réel.</p>
+        <div class="bg-teal-700 h-1 w-32 mx-auto mt-3 rounded-full"></div>
+    </div>
+
+    <div class="grid gap-6">
+                      <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {% for offer in offers %}
+
+
+               {% if offer.status == "disponible"%}
+
+                              <div class="block bg-gradient-to-r from-teal-800 to-teal-900 border border-teal-600 shadow-lg hover:shadow-[#14b8a6]/40 p-5 transition transform hover:-translate-y-1 hover:scale-[1.02] duration-300 ease-in-out">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-teal-300 font-semibold">Offre #{{ offer.id }}</span>
+                    <span class="text-sm bg-blue-500 px-3 py-1 rounded text-white">En attente de cambiste</span>
+                </div>
+                <p class="text-xl font-bold">1 {{ offer.ma_devise }} = {{ offer.taux_souhaite }} {{ offer.devise_souhaitee }}</p>
+                <p class="text-sm text-gray-300">Quantité : {{ offer.quantite }} {{ offer.ma_devise }}</p>
+                <p class="text-xs text-gray-400 mt-2">Créée le {{ offer.date_creation|date:"d/m/Y H:i" }}</p>
+            </div>
+                          {% elif offer.status == "reservee" %}
+
+            <a href="{% url 'chat' offer_id=offer.id %}" class="block bg-gradient-to-r from-teal-800 to-teal-900 border border-teal-600 shadow-lg hover:shadow-[#14b8a6]/40 p-5 transition transform hover:-translate-y-1 hover:scale-[1.02] duration-300 ease-in-out">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-teal-300 font-semibold">Offre #{{ offer.id }}</span>
+                    <span class="text-sm bg-green-500 px-3 py-1 rounded text-white">Cambiste trouvé - Lancer discussion</span>
+                </div>
+                <p class="text-xl font-bold">1 {{ offer.ma_devise }} = {{ offer.taux_souhaite }} {{ offer.devise_souhaitee }}</p>
+                <p class="text-sm text-gray-300">Quantité : {{ offer.quantite }} {{ offer.ma_devise }}</p>
+                <p class="text-xs text-gray-400 mt-2">Créée le {{ offer.date_creation|date:"d/m/Y H:i" }}</p>
+            </a>
+
+                              {% else %}
+
+                              <div class="block bg-gradient-to-r from-teal-800 to-teal-900 border border-teal-600 shadow-lg hover:shadow-[#14b8a6]/40 p-5 transition transform hover:-translate-y-1 hover:scale-[1.02] duration-300 ease-in-out">
+                <div class="flex justify-between items-center mb-2">
+                    <span class="text-teal-300 font-semibold">Offre #{{ offer.id }}</span>
+                    <span class="text-sm bg-orange-500 px-3 py-1 rounded text-white">Offre clôturée</span>
+                </div>
+                <p class="text-xl font-bold">1 {{ offer.ma_devise }} = {{ offer.taux_souhaite }} {{ offer.devise_souhaitee }}</p>
+                <p class="text-sm text-gray-300">Quantité : {{ offer.quantite }} {{ offer.ma_devise }}</p>
+                <p class="text-xs text-gray-400 mt-2">Clôturée le {{ offer.date_creation|date:"d/m/Y H:i" }}</p>
+            </div>
+                              {% endif %}
+
+        {% empty %}
+            <p class="text-gray-500 text-center mt-6">🚫 Aucune offre pour le moment.</p>
+
+        {% endfor %}
+                                        </div>
+    </div>
+
+</div>
+{% endblock %}

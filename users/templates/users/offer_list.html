@@ -1,0 +1,49 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<section class=" bg-black min-h-screen">
+  <div class="max-w-7xl mx-auto">
+    <!-- Titre -->
+    <div class="text-center mb-10">
+        <p class="text-gray-400">Liste des offres du marché en temps réel.</p>
+        <div class="bg-teal-700 h-1 w-32 mx-auto mt-3 rounded-full"></div>
+    </div>
+
+    <!-- Liste des offres -->
+    <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {% for offer in offers %}
+      <div class="block bg-gradient-to-r from-teal-800 to-teal-900 border border-teal-600 shadow-lg hover:shadow-[#14b8a6]/40 p-5 transition transform hover:-translate-y-1 hover:scale-[1.02] duration-300 ease-in-out">
+
+        <!-- En-tête -->
+        <div class="flex justify-between items-center mb-3">
+          <span class="text-teal-300 font-semibold">Offre #{{ offer.id }}</span>
+          {% if user.is_authenticated and user.type == 'cambiste' and offer.user != user %}
+            <a href="{% url 'reserve_offer' offer.id %}"
+               class="bg-green-500 hover:bg-orange-700 text-white text-xs px-3 py-1 rounded transition">
+              Réserver
+            </a>
+          {% endif %}
+            {% if offer.user == user %}
+                <p
+               class="bg-blue-500  hover:bg-blue-500 text-white text-xs px-3 py-1 rounded transition">
+              Mon offre
+            </p>
+              {% endif %}
+
+        </div>
+
+        <!-- Détails offre -->
+        <h3 class="text-lg font-bold text-white">
+          1 {{ offer.ma_devise }} = {{ offer.taux_souhaite }} {{ offer.devise_souhaitee }}
+        </h3>
+        <p class="text-gray-300 mt-2">Quantité : {{ offer.quantite }} {{ offer.ma_devise }}</p>
+        <p class="text-gray-400 text-xs mt-3">🕒 Créée le {{ offer.date_creation|date:"d/m/Y H:i" }}</p>
+
+      </div>
+      {% empty %}
+      <p class="text-gray-500 text-center col-span-full mt-6">🚫 Aucune offre disponible pour le moment.</p>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}

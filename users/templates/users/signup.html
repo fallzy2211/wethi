@@ -1,0 +1,20 @@
+{% extends 'users/base.html' %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% block content %}
+
+
+<body class="bg-gray-100 flex justify-center items-center h-screen">
+    <div class="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 class="text-center text-xl font-bold mb-4">Inscription</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <button type="submit" class="w-full bg-blue-500 text-white py-2 rounded mt-4">S'inscrire</button>
+        </form>
+        <p class="mt-4 text-center text-sm">
+            Déjà un compte ? <a href="{% url 'login' %}" class="text-blue-500">Connectez-vous</a>
+        </p>
+    </div>
+</body>
+{% endblock %}

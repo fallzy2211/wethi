@@ -1,0 +1,96 @@
+{% extends 'users/base.html' %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto p-4 bg-transparent text-gray-100 rounded">
+
+    <!-- En-tête Offre -->
+    <div class="text-center mb-6">
+
+
+
+        <h2  class="flex items-center justify-center text-md font-bold text-gray-200">
+
+           <svg class="w-6 h-6 text-green-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+             <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 8.511c.884.284 1.5 1.128 1.5 2.097v4.286c0 1.136-.847 2.1-1.98 2.193-.34.027-.68.052-1.02.072v3.091l-3-3c-1.354 0-2.694-.055-4.02-.163a2.115 2.115 0 0 1-.825-.242m9.345-8.334a2.126 2.126 0 0 0-.476-.095 48.64 48.64 0 0 0-8.048 0c-1.131.094-1.976 1.057-1.976 2.192v4.286c0 .837.46 1.58 1.155 1.951m9.345-8.334V6.637c0-1.621-1.152-3.026-2.76-3.235A48.455 48.455 0 0 0 11.25 3c-2.115 0-4.198.137-6.24.402-1.608.209-2.76 1.614-2.76 3.235v6.226c0 1.621 1.152 3.026 2.76 3.235.577.075 1.157.14 1.74.194V21l4.155-4.155" />
+        </svg> Discussion concernant l'offre {{ offer.id }}</h2>
+        <p class="text-sm text-gray-400">
+            {{ offer.quantite }} {{ offer.ma_devise }} au taux de {{ offer.taux_souhaite }} {{ offer.devise_souhaitee }}
+        </p>
+    </div>
+
+    <!-- Zone des messages -->
+    <div id="chat-box" class="h-96 overflow-y-auto border border-teal-700 p-4 rounded-3xl mb-4 bg-gray-900 shadow-inner">
+        {% for message in messages %}
+        <div class="flex items-start mb-3 {% if message.sender == user %}justify-end{% else %}justify-start{% endif %}">
+
+            {% if message.sender != user %}
+            <!-- Avatar ou initiale de l'autre utilisateur -->
+            <div class="flex-shrink-0 mr-2">
+                {% if message.sender.profile.photo %}
+                    <img src="{{ message.sender.profile.photo.url }}" class="w-8 h-8 rounded-full border-2 border-teal-600">
+                {% else %}
+                    <div class="w-8 h-8 rounded-full bg-teal-700 flex items-center justify-center text-white font-bold">
+                        {{ message.sender.username| upper }}
+                    </div>
+                {% endif %}
+            </div>
+            {% endif %}
+
+            <!-- Bulle de message -->
+            <div class="max-w-[70%]">
+                <p class="px-4 py-2 rounded-2xl shadow-lg {% if message.sender == user %}bg-teal-700 text-white{% else %}bg-gray-800 text-gray-200{% endif %}">
+                    {{ message.content }}
+                </p>
+                <p class="text-xs text-gray-500 mt-1">{{ message.timestamp|date:"H:i" }}</p>
+            </div>
+
+            {% if message.sender == user %}
+            <!-- Avatar utilisateur -->
+            <div class="flex-shrink-0 ml-2">
+                <div class="w-8 h-8 rounded-full bg-teal-600 flex items-center justify-center text-white font-bold">
+                    {{ user.username | upper }}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Formulaire d'envoi -->
+    <form id="chat-form" method="post" class="flex space-x-2">
+        {% csrf_token %}
+        <input type="text" id="message-input" name="content" placeholder="💬 Écrire un message..."
+               class="flex-1 border border-teal-600 bg-gray-800 text-gray-100 p-3 rounded-full focus:ring-2 focus:ring-teal-500 focus:outline-none">
+        <button type="submit"
+                class="bg-gradient-to-r from-teal-700 to-teal-600 text-white px-6 py-2 rounded-full hover:from-teal-600 hover:to-teal-500 transition duration-200">
+            Envoyer
+        </button>
+    </form>
+</div>
+
+<!-- Rafraîchissement -->
+<script>
+    function refreshChat() {
+        fetch(window.location.href, { headers: { 'X-Requested-With': 'XMLHttpRequest' } })
+        .then(response => response.text())
+        .then(html => {
+            const chatBox = document.getElementById('chat-box');
+            const parser = new DOMParser();
+            const newDoc = parser.parseFromString(html, 'text/html');
+            chatBox.innerHTML = newDoc.getElementById('chat-box').innerHTML;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+    }
+
+    setInterval(refreshChat, 3000);
+
+    document.getElementById('chat-form').addEventListener('submit', function(event) {
+        event.preventDefault();
+        const input = document.getElementById('message-input');
+        const data = new FormData(this);
+        fetch(window.location.href, { method: 'POST', body: data }).then(response => {
+            if (response.ok) { input.value = ''; refreshChat(); }
+        });
+    });
+</script>
+{% endblock %}

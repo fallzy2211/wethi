@@ -1,0 +1,89 @@
+{% extends 'users/base.html' %}
+{% load crispy_forms_tags %}
+
+{% load tailwind_filters %}
+{% block content %}
+
+<div id="wrap" class="bg-transparent oe_structure oe_empty"  >
+<section class="relative h-screen flex items-center justify-center text-white overflow-hidden" style="background-image: url('/media/fond.png'); background-size: cover; background-position: center;">
+
+                  <div class="ml-4 mr-4  bg-gradient-to-r from-teal-800 to-teal-700  border border-red-500 rounded-3xl shadow-sm flex flex-col shadow-lg ">
+
+    <form method="post" enctype="multipart/form-data"
+          class=" p-8  w-full max-w-md">
+
+      <h1 class="text-2xl text-center text-gray-200 mb-4">Créer un compte. </h1>
+
+      {% csrf_token %}
+        {% if form.non_field_errors %}
+          <div class="bg-red-900 border border-red-600 text-red-200 p-3 mb-4 rounded">
+            {% for error in form.non_field_errors %}
+              <p>{{ error }}</p>
+            {% endfor %}
+          </div>
+        {% endif %}
+      <!-- Nom d'utilisateur -->
+      <input type="text" name="username" placeholder="Nom d'utilisateur" required
+               class="text-sm w-full py-3 px-4 border border-gray-700 rounded-md mb-3 bg-gray-200 text-gray-500">
+
+      <!-- Email -->
+      <input type="email" name="email" placeholder="Email" required
+             class="text-sm w-full py-3 px-4 border border-gray-700 rounded-md mb-3 bg-gray-200 text-gray-500">
+
+      <!-- Type d’utilisateur -->
+      <select name="type" id="id_type" required
+              class="text-sm w-full py-3 px-4 border border-gray-700 rounded-md mb-3 bg-gray-200 text-gray-500">
+        <option value="">-- Choisir le type d’utilisateur --</option>
+        <option value="particulier">Particulier</option>
+        <option value="cambiste">Cambiste</option>
+      </select>
+
+      <!-- Pièce d’identité -->
+      <label class="block text-sm text-gray-200 mb-2">Photo de la pièce d’identité</label>
+      <input type="file" name="photo_piece_identite" accept="image/*" required
+             class="w-full border border-gray-700 rounded-md py-2 px-3 bg-gray-200 text-gray-500 mb-3">
+
+      <!-- Agrément (visible seulement si Cambiste) -->
+      <div id="agrementField" class="hidden">
+        <label class="block text-sm text-gray-200 mb-2">Document d’agrément BCEAO</label>
+        <input type="file" name="agrement_banque" accept="image/*"
+               class="w-full border border-gray-700 rounded-md py-2 px-3 bg-gray-200 text-gray-500 mb-3">
+      </div>
+
+      <!-- Mots de passe -->
+      <input type="password" name="password1" placeholder="Mot de passe" required
+             class="text-sm w-full py-3 px-4 border border-gray-700 rounded-md mb-3 bg-gray-200 text-gray-500">
+
+      <input type="password" name="password2" placeholder="Confirmer le mot de passe" required
+             class="text-sm w-full py-3 px-4 border border-gray-700 rounded-md mb-4 bg-gray-200 text-gray-500">
+
+      <!-- Bouton -->
+      <button type="submit"
+              class="bg-teal-700 hover:bg-teal-600 w-full py-3 rounded-md text-gray-100 font-bold shadow-lg border border-red-500">
+        Créer compte
+      </button>
+
+      <p class="text-center text-sm text-gray-400 mt-4">
+        Déjà inscrit ?
+        <a href="{% url 'login' %}" class="text-red-500 hover:underline">Connexion</a>
+      </p>
+    </form>
+
+                  </div>
+
+</section>
+</div>
+  <!-- Script : afficher agrément si Cambiste -->
+  <script>
+    document.getElementById('id_type').addEventListener('change', function() {
+      const agrementField = document.getElementById('agrementField');
+      if (this.value === 'cambiste') {
+        agrementField.classList.remove('hidden');
+      } else {
+        agrementField.classList.add('hidden');
+      }
+    });
+  </script>
+
+
+{% endblock %}
